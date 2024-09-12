@@ -37,3 +37,5 @@ temp/
 
 # Generated files
 ldapm
+migrations/
+.ldapm
