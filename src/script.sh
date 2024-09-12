@@ -175,12 +175,14 @@ function main() {
     trap script_trap_exit EXIT
 
     script_init "$@"
+    pushd "$(dirname "${BASH_SOURCE[0]}")" > /dev/null
     ldapm_init
     colour_init
 
     parse_params "$@"
 
     migrate
+    popd > /dev/null
 }
 
 # shellcheck source=source.sh
