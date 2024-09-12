@@ -130,6 +130,7 @@ function parse_params() {
                 ;;
             new)
                 create_migration
+                exit 0
                 ;;
             *)
                 script_exit "Invalid parameter was provided: $param" 1
