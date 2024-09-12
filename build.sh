@@ -16,7 +16,7 @@ set -o pipefail         # Use last non-zero exit code in a pipeline
 # Main control flow
 function main() {
     # shellcheck source=source.sh
-    source "$(dirname "${BASH_SOURCE[0]}")/source.sh"
+    source "$(dirname "${BASH_SOURCE[0]}")/src/source.sh"
 
     trap "script_trap_err" ERR
     trap "script_trap_exit" EXIT
@@ -35,13 +35,10 @@ function build_template() {
     local script_options source_data script_data
 
     shebang="#!/usr/bin/env bash"
-    header="
-# A best practices Bash script template with many useful functions. This file
-# combines the source.sh & script.sh files into a single script. If you want
-# your script to be entirely self-contained then this should be what you want!"
+    header="# ldapm - A simple LDAP migration tool."
 
-    source_file="$script_dir/source.sh"
-    script_file="$script_dir/script.sh"
+    source_file="$script_dir/src/source.sh"
+    script_file="$script_dir/src/script.sh"
 
     script_options="$(head -n 26 "$script_file" | tail -n 17)"
     source_data="$(tail -n +10 "$source_file" | head -n -1)"
@@ -53,14 +50,14 @@ function build_template() {
         printf '%s\n\n' "$script_options"
         printf '%s\n\n' "$source_data"
         printf '%s\n' "$script_data"
-    } > template.sh
+    } > ldapm
 
     tmp_file="$(mktemp /tmp/template.XXXXXX)"
     sed -e '/# shellcheck source=source\.sh/{N;N;d;}' \
         -e 's/BASH_SOURCE\[1\]/BASH_SOURCE[0]/' \
-        template.sh > "$tmp_file"
-    mv "$tmp_file" template.sh
-    chmod +x template.sh
+        ldapm > "$tmp_file"
+    mv "$tmp_file" ldapm
+    chmod +x ldapm
 }
 
 # Template, assemble!

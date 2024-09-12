@@ -9,32 +9,43 @@
 
 # Enable xtrace if the DEBUG environment variable is set
 if [[ ${DEBUG-} =~ ^1|yes|true$ ]]; then
-    set -o xtrace       # Trace the execution of the script (debug)
+    set -o xtrace # Trace the execution of the script (debug)
 fi
 
 # Only enable these shell behaviours if we're not being sourced
 # Approach via: https://stackoverflow.com/a/28776166/8787985
-if ! (return 0 2> /dev/null); then
+if ! (return 0 2>/dev/null); then
     # A better class of script...
-    set -o errexit      # Exit on most errors (see the manual)
-    set -o nounset      # Disallow expansion of unset variables
-    set -o pipefail     # Use last non-zero exit code in a pipeline
+    set -o errexit  # Exit on most errors (see the manual)
+    set -o nounset  # Disallow expansion of unset variables
+    set -o pipefail # Use last non-zero exit code in a pipeline
 fi
 
 # Enable errtrace or the error trap handler will not work as expected
-set -o errtrace         # Ensure the error trap handler is inherited
+set -o errtrace # Ensure the error trap handler is inherited
 
 # DESC: Usage help
 # ARGS: None
 # OUTS: None
 # RETS: None
 function script_usage() {
-    cat << EOF
+    cat <<EOF
+
+██╗     ██████╗  █████╗ ██████╗ ███╗   ███╗
+██║     ██╔══██╗██╔══██╗██╔══██╗████╗ ████║
+██║     ██║  ██║███████║██████╔╝██╔████╔██║
+██║     ██║  ██║██╔══██║██╔═══╝ ██║╚██╔╝██║
+███████╗██████╔╝██║  ██║██║     ██║ ╚═╝ ██║
+╚══════╝╚═════╝ ╚═╝  ╚═╝╚═╝     ╚═╝     ╚═╝
+
+A simple LDAP migration tool.
+By default, ldapm will try to apply all migrations that have not been applied yet.
+If you want to create a new migration, use the 'new' command.
 Usage:
-     -h|--help                  Displays this help
-     -v|--verbose               Displays verbose output
+    new                         Create a new migration
+    -h |--help                  Displays this help
+    -v |--verbose               Displays verbose output
     -nc|--no-colour             Disables colour output
-    -cr|--cron                  Run silently unless we encounter an error
 EOF
 }
 
@@ -48,22 +59,19 @@ function parse_params() {
         param="$1"
         shift
         case $param in
-            -h | --help)
-                script_usage
-                exit 0
-                ;;
-            -v | --verbose)
-                verbose=true
-                ;;
-            -nc | --no-colour)
-                no_colour=true
-                ;;
-            -cr | --cron)
-                cron=true
-                ;;
-            *)
-                script_exit "Invalid parameter was provided: $param" 1
-                ;;
+        -h | --help)
+            script_usage
+            exit 0
+            ;;
+        -v | --verbose)
+            verbose=true
+            ;;
+        -nc | --no-colour)
+            no_colour=true
+            ;;
+        *)
+            script_exit "Invalid parameter was provided: $param" 1
+            ;;
         esac
     done
 }
@@ -78,9 +86,10 @@ function main() {
 
     script_init "$@"
     parse_params "$@"
-    cron_init
     colour_init
-    #lock_init system
+
+
+
 }
 
 # shellcheck source=source.sh
@@ -88,7 +97,7 @@ source "$(dirname "${BASH_SOURCE[0]}")/source.sh"
 
 # Invoke main with args if not sourced
 # Approach via: https://stackoverflow.com/a/28776166/8787985
-if ! (return 0 2> /dev/null); then
+if ! (return 0 2>/dev/null); then
     main "$@"
 fi
 
