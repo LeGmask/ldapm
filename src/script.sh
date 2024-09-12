@@ -159,7 +159,7 @@ function migrate() {
     for migration in migrations/*; do
         if ! grep -q "$migration" .ldapm; then
             pretty_print "Applying migration $migration" $fg_black
-            slapadd -n "$LDAP_DB" -f "$LDAP_CONF" -l "$migration"
+            slapmodify -n "$LDAP_DB" -l "$migration" -f "$LDAP_CONF"
             echo "$migration" >> .ldapm
         fi
     done
